@@ -1,28 +1,62 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta name="theme-color" content="#0b1020"/><title>CCA-F Practice Bank</title><link rel="manifest" href="manifest.webmanifest"/><link rel="stylesheet" href="styles.css"/></head><body>
-<div class="app-shell">
-<header class="topbar"><div><div class="eyebrow">CCA-F / CCAR-F</div><h1>Architect Foundations Practice</h1></div><button id="menuBtn" class="icon-btn" aria-label="Open sections">☰</button></header>
-<section class="stats"><div><strong id="answeredCount">0</strong><span>Answered</span></div><div><strong id="laterCount">0</strong><span>Later</span></div><div><strong id="scoreCount">0%</strong><span>Score</span></div></section>
-<section class="progress-wrap"><div class="progress"><span id="progressBar"></span></div><div id="progressText" class="progress-text"></div></section>
-<main>
-  <div id="emptyState" class="empty hidden"><h2>All done here.</h2><p>Change section, review answered questions, or open Solve Later.</p></div>
-  <article id="card" class="card" tabindex="0" aria-live="polite">
-    <div class="card-meta"><span id="domainPill" class="pill"></span><span id="difficultyPill" class="pill muted"></span><span id="sourcePill" class="pill muted"></span></div>
-    <div class="question-index" id="questionIndex"></div>
-    <h2 id="questionText"></h2>
-    <form id="optionsForm" class="options"></form>
-    <div id="resultBox" class="result hidden"></div>
-  </article>
-  <div class="gesture-hint">← Solve later · Swipe card · Submit →</div>
-  <div class="actions"><button id="laterBtn" class="secondary">← Solve later</button><button id="submitBtn" class="primary">Submit →</button></div>
-</main>
-</div>
-<div id="drawerBackdrop" class="backdrop hidden"></div>
-<aside id="drawer" class="drawer" aria-hidden="true">
- <div class="drawer-head"><div><div class="eyebrow">Study filters</div><h2>Choose section</h2></div><button id="closeDrawer" class="icon-btn" aria-label="Close">×</button></div>
- <label>Mode<select id="modeSelect"><option value="study">Study unanswered</option><option value="review">Review answered</option><option value="later">Solve later</option><option value="all">All questions</option></select></label>
- <label>Domain<select id="domainSelect"><option value="all">All domains</option></select></label>
- <label>Difficulty<select id="difficultySelect"><option value="all">All difficulties</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
- <div class="drawer-actions"><button id="resetSection" class="danger">Reset current section</button><button id="resetAll" class="ghost">Reset all progress</button></div>
- <div class="about"><strong>Gesture controls</strong><p>Swipe right to submit the selected option. Swipe left to mark the card for later. Buttons work the same way.</p><p>Progress stays on this device via local storage.</p></div>
-</aside>
-<script type="module" src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="color-scheme" content="dark">
+  <title>CCA-F Practice Bank</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="sticky-shell">
+      <div class="brand-row">
+        <div>
+          <div class="eyebrow">CCA-F / CCAR-F</div>
+          <h1>Architect Foundations</h1>
+        </div>
+        <button id="resetAllBtn" class="icon-button" type="button" aria-label="Reset all progress" title="Reset all progress">↻</button>
+      </div>
+      <div class="filters" aria-label="Question filters">
+        <label><span>Mode</span><select id="modeFilter"><option value="study">Study</option><option value="review">Review answered</option><option value="flagged">Solve later</option><option value="all">All questions</option></select></label>
+        <label><span>Domain</span><select id="domainFilter"><option value="all">All domains</option></select></label>
+        <label><span>Difficulty</span><select id="difficultyFilter"><option value="all">All levels</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
+        <label><span>Section</span><select id="sectionFilter"><option value="all">All sections</option></select></label>
+      </div>
+      <div class="status-row">
+        <div class="metric"><strong id="answeredMetric">0</strong><span>Answered</span></div>
+        <div class="metric"><strong id="flaggedMetric">0</strong><span>Later</span></div>
+        <div class="metric"><strong id="remainingMetric">200</strong><span>Remaining</span></div>
+        <div class="metric"><strong id="scoreMetric">0%</strong><span>Score</span></div>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+    </header>
+    <main class="deck-wrap">
+      <section id="emptyState" class="empty-state hidden" aria-live="polite">
+        <h2>No cards in this view</h2>
+        <p>Change a filter, review answered cards, or open your Solve Later queue.</p>
+      </section>
+      <article id="card" class="question-card" aria-live="polite">
+        <div class="card-head">
+          <div class="chips"><span id="domainChip" class="chip primary"></span><span id="difficultyChip" class="chip"></span><span id="sourceChip" class="chip"></span></div>
+          <div id="questionCounter" class="question-counter"></div>
+        </div>
+        <div class="section-name" id="sectionName"></div>
+        <h2 id="questionText"></h2>
+        <fieldset id="optionsFieldset" class="options"><legend class="sr-only">Choose one answer</legend></fieldset>
+        <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+      </article>
+      <div class="swipe-hint" aria-hidden="true"><span>← Solve later</span><span>Swipe card</span><span>Submit →</span></div>
+      <div class="controls">
+        <button id="laterBtn" class="button secondary" type="button">← Solve later</button>
+        <button id="retakeFlaggedBtn" class="button tertiary hidden" type="button">Retake flagged</button>
+        <button id="submitBtn" class="button primary" type="button">Submit →</button>
+      </div>
+      <p id="progressText" class="progress-text"></p>
+    </main>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
